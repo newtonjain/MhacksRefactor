@@ -1,0 +1,48 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "code-push": {
+            "PACKAGE_NAME": "Pheedback"
+        },
+        "cordova-plugin-app-event": {
+            "PACKAGE_NAME": "Pheedback"
+        },
+        "cordova-plugin-code-push": {
+            "PACKAGE_NAME": "Pheedback"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "Pheedback"
+        },
+        "cordova-plugin-device-motion": {
+            "PACKAGE_NAME": "Pheedback"
+        },
+        "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "Pheedback"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "Pheedback"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "Pheedback"
+        },
+        "cordova-plugin-inappbrowser": {
+            "PACKAGE_NAME": "Pheedback"
+        },
+        "cordova-plugin-vibration": {
+            "PACKAGE_NAME": "Pheedback"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "Pheedback"
+        },
+        "cordova-plugin-zip": {
+            "PACKAGE_NAME": "Pheedback"
+        }
+    },
+    "dependent_plugins": {}
+}
