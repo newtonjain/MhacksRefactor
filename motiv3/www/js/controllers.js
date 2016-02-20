@@ -107,6 +107,19 @@ angular.module('starter.controllers', [])
 })
 
 .controller('FeedbackCtrl', function($scope, $window, $ionicSlideBoxDelegate, $ionicModal) {
+  $scope.newGoal={};
+
+  $scope.devList = [
+    { text: "Go to the Gym", checked: true },
+    { text: "Wake up early", checked: false },
+    { text: "Eat healthy", checked: false }
+  ];
+
+  $scope.adding = function(goal) {
+    if(goal) {
+      $scope.devList.push({text: goal, checked: false});
+    }
+  }
     
 
 })
