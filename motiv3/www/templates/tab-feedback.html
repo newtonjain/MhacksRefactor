@@ -8,16 +8,16 @@
 
   <div class="item item-input-inset">
     <label class="item-input-wrapper">
-      <input type="text" placeholder="Today's Goals" ng-model="goal">
+      <input type="text" placeholder="Today's Goals" ng-model='goal'>
     </label>
-    <button class="button button-small" ng-click="adding(goal); goal=''">
+    <button class="button button-small" ng-click="adding(goal)">
       Submit
     </button>
   </div>
 </div>
 
    <ion-checkbox ng-repeat="item in Goals" ng-model="item.Status" ng-checked="item.Status">
-        {{ item.Name }}
+        {{ item.Name }}, {{item.Status}}
     </ion-checkbox>
     <br>
     <br>
@@ -44,8 +44,7 @@
     </div>
 
 
-
-<!-- <button ng-click="submitSurvey()"></button> -->
+<button ng-click="checkGoals(); submitSurvey()">Day's End</button>
 
 <!--     {{data}}; -->
     <!--  -->

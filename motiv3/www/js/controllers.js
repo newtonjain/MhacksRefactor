@@ -6,6 +6,7 @@ angular.module('starter.controllers', [])
   _self.users = new Firebase("https://motiv3.firebaseio.com/users");
   _self.Goals = new Firebase("https://motiv3.firebaseio.com/Goals");
   $scope.cOne;
+  $scope.allDone;
   
   $scope.Goals;
   $scope.users = $firebaseArray(_self.users);
@@ -175,29 +176,31 @@ angular.module('starter.controllers', [])
     if(goal) {
       if(Object.keys($scope.Goals).length <3) {
       if(Object.keys($scope.Goals).length == 0) {
-      $scope.Goals.One = {Name: goal, status: false};
+      $scope.Goals.One = {Name: goal, Status: false};
       } else if(Object.keys($scope.Goals).length == 1) {
-      $scope.Goals.Two = {Name: goal, status: false};
+      $scope.Goals.Two = {Name: goal, Status: false};
       } else if(Object.keys($scope.Goals).length == 2) {
-      $scope.Goals.Three = {Name: goal, status: false};
+      $scope.Goals.Three = {Name: goal, Status: false};
       }
     } else {
       alert('only 3 goals allowed');
     }
   }
+  $scope.goal = "";
 }
 
-    $scope.submitSurvey = function() {
-        var send={};
+  $scope.submitSurvey = function() {
+      var send={};
 
-      $scope.users[$scope.index].Goals = $scope.Goals;
-      console.log('///', $scope.users[$scope.index].Goals);
+    $scope.users[$scope.index].Goals = $scope.Goals;
+    console.log('///', $scope.users[$scope.index].Goals);
 
-      $scope.users.$save($scope.index).then(function() {
-          //$scope.modal.show();
-          $scope.surveySubmitted = true;
-          });
-    }
+    $scope.users.$save($scope.index).then(function() {
+        //$scope.modal.show();
+        $scope.surveySubmitted = true;
+        });
+
+  }
 
 $scope.doRefresh = function() {
 $http.get('https://www.googleapis.com/plus/v1/people/101275194113117307949/activities/public?fields=items%28object%2Fattachments%2FfullImage%2Furl%2Ctitle%29&key=AIzaSyCVVfJSqBg31bhwX_KGMp4mMGQF-kRQ8wQ')
@@ -210,6 +213,27 @@ $http.get('https://www.googleapis.com/plus/v1/people/101275194113117307949/activ
   console.log("Error: " + JSON.stringify(data));
 });
 
+}
+
+$scope.checkGoals = function() {
+  var len = Object.keys($scope.Goals).length;
+  var abc;
+    if($scope.Goals.One.Status == false ){
+      abc = false;
+      console.log('a/', abc, $scope.Goals.One.Status);
+    } else if($scope.Goals.Two.Status == false ){
+      abc = false;
+      console.log('b//',abc, $scope.Goals.Two.Status);
+    }else if($scope.Goals.Three.Status == false ){
+      abc = false;
+      console.log('c////',abc,  $scope.Goals.Three.Status);
+    } else {
+       abc = true;
+    }
+
+    if(!abc){
+      $scope.withdraw();
+    }
 }
 
 
