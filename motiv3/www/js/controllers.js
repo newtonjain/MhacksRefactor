@@ -1,6 +1,6 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $http, $firebaseArray, $ionicModal, $cordovaLocalNotification) {
+.controller('AppCtrl', function($scope, $http, $window, $firebaseArray, $ionicModal, $cordovaLocalNotification) {
 
   var _self = this;
   _self.users = new Firebase("https://motiv3.firebaseio.com/users");
@@ -9,6 +9,20 @@ angular.module('starter.controllers', [])
   
   $scope.users = $firebaseArray(_self.users);
   $scope.date = new Date();
+
+  $scope.camera = function() {
+    $window.navigator.camera.getPicture(onSuccess, onError);
+  }
+
+  function onSuccess(imageData) {
+     var image = document.getElementById('myImage');
+   image.src = "data:image/jpeg;base64," + imageData;
+
+  }
+
+  function onError(data) {
+    console.log('here is the error', data);
+  }
   
 
   var notifications = _self.pushNotify;

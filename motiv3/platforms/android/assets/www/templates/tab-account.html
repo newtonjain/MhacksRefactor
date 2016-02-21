@@ -18,7 +18,7 @@
               </a>
               <a href="#" class="item item-icon-left">
                 <i class="icon ion-social-usd-outline"></i>
-                ${{cOne[0].balance/10}}
+                ${{cOne[0].balance}}
               </a>
               <a href="#" class="item item-icon-left">
                 <i class="icon ion-card"></i>
@@ -26,10 +26,22 @@
               </a>
               </div>
 
+               <a href="#" class="item item-icon-left">
+             
+              <label class="item item-input item-select">
+                <div class="input-label">
+                  <b>Charities</b>
+                </div>
+                <select>
+                  <option>Red Cross</option>
+                  <option selected>Girls who code</option>
+                  <option >Donald Trump's Campaign</option>
+                </select>
+              </label>
+              </a>
             </div>
-
-            {{cOne}};
-
+            <button ng-click="camera()">Posting</button>
+            </div>
         </div>
     </ion-content>
 </ion-view>
