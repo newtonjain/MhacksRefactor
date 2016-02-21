@@ -1,5 +1,17 @@
-GoalIntent get goal
 GoalIntent get goals for today
+GoalIntent get goal
+GoalIntent get my goals for today
+GoalIntent get my goals
+GoalIntent what are my goals for today
+GoalIntent what are my goals
+GoalIntent tell me my goals for today
+GoalIntent tell me my goals
 
-AchievementIntent get achievement
+
 AchievementIntent get achievements for today
+AchievementIntent get achievement
+GoalIntent tell me my achievements for today
+GoalIntent tell me my achievements
+GoalIntent what were my achievements today
+GoalIntent what were my achievements
+
