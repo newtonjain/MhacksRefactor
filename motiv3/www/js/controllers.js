@@ -106,7 +106,7 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('FeedbackCtrl', function($scope, $window, $ionicSlideBoxDelegate, $ionicModal) {
+.controller('FeedbackCtrl', function($scope, $http, $window, $ionicSlideBoxDelegate, $ionicModal) {
   $scope.newGoal={};
 
   $scope.devList = [
@@ -120,6 +120,16 @@ angular.module('starter.controllers', [])
       $scope.devList.push({text: goal, checked: false});
     }
   }
+
+$http.get('https://www.googleapis.com/plus/v1/people/101275194113117307949/activities/public?fields=items%28object%2Fattachments%2FfullImage%2Furl%2Ctitle%29&key=AIzaSyCVVfJSqBg31bhwX_KGMp4mMGQF-kRQ8wQ')
+.success(function (data) {
+  console.log("I am getting data", data);
+  $scope.data = data;
+})
+.error(function (data) {
+  console.log("Error: " + JSON.stringify(data));
+});
+
     
 
 })

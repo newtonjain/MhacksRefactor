@@ -354,3 +354,8 @@ a.download:hover, a.follow:hover {
   display: block;
   margin: 14px;
 }
+
+
+.flex {
+  display: flex;
+}

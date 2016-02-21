@@ -17,7 +17,7 @@
        under the License.
  */
 
-package pheedback.pheedback;
+package motiv3.motiv3;
 
 import android.os.Bundle;
 import org.apache.cordova.*;
