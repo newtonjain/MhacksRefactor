@@ -23,7 +23,7 @@ body, html{
   border-radius: 100%;
   overflow: hidden;
   margin: 0 auto;
-  background: #95B3BF;
+  background: #b2ffb2;
   position: relative;
 
   -moz-mask-image: -webkit-radial-gradient(#BADA55, #BADA55);
@@ -98,7 +98,7 @@ body, html{
 .hair-main{
   width:220px;
   height: 0px;
-  background: #E7AB57;
+  background: #181009;
   border-radius: 54px 54px 0px 0px;
   margin-left: -12px;
   margin-top: -10px;
@@ -115,7 +115,7 @@ body, html{
   height: 70px;
   opacity: 0;
   border-top-right-radius: 30px;
-  background: #E7AB57;
+  background: #181009;
   position: relative;
   top: -17px;
   left: 50%;
@@ -134,7 +134,7 @@ body, html{
   height: 50px;
   opacity: 0;
   border-bottom-left-radius: 25px;
-  background: #E7AB57;
+  background: #181009;
   position: relative;
   top: -20px;
   left: 50%;
@@ -151,7 +151,7 @@ body, html{
 .sideburn{
   width: 8px;
   height: 25px;
-  background: #E7AB57;
+  background: #181009;
   position: absolute;
   bottom: -25px;
   opacity: 0;
@@ -264,7 +264,7 @@ body, html{
 .eyebrow{
   width: 40px;
   height: 10px;
-  background: #E7AB57;
+  background: #181009;
   position: absolute;
   top: -35px;
   left: 50%;
