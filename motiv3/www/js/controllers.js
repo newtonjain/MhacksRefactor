@@ -169,8 +169,12 @@ angular.module('starter.controllers', [])
     $scope.users.$save($scope.index).then(function() {
         //$scope.modal.show();
         $scope.surveySubmitted = true;
+        console.log('please reset', $scope.Goals.One.Status);
+        $scope.Goals.One.Status = false;
+        $scope.Goals.Two.Status = false;
+        $scope.Goals.Three.Status = false;
+        console.log('please reset', $scope.Goals.One.Status, $scope.Goals.One.Status, $scope.Goals.Three.Status);
         });
-
   }
 
 $scope.doRefresh = function() {
@@ -201,11 +205,24 @@ $scope.checkGoals = function() {
     } else {
        abc = true;
     }
-
+    $scope.modal.show();
     if(!abc){
       $scope.withdraw();
     }
+
 }
+
+  $scope.closeLogin = function() {
+      $scope.modal.hide();
+  };
+
+
+    $ionicModal.fromTemplateUrl('templates/surveyComplete.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.modal = modal;
+    });
+
 
 
 })
