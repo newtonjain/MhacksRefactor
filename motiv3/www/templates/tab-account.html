@@ -1,15 +1,46 @@
 <ion-view view-title="Account">
     <ion-content>       
         <div class="list card">
-            <center>
-                <h2>{{authData.displayName}}</h2>
-                <p><strong>Email: </strong>{{authData.email}}</p>
-            </center>
+        
 
-            <div class="item item-body">
-                <center>
-                    <img src="{{ authData.profileImageURL}}" style="width:200px" class="headshot menu-item">
-                </center>
+            <div class="list card">
+
+              <div class="item item-avatar">
+                <img src="{{ authData.profileImageURL}}">
+                <h2>{{authData.displayName}}</h2>
+                <p>{{date}}</p>
+              </div>
+
+              <div class="item item-body">
+                <a href="#" class="item item-icon-left">
+                <i class="icon ion-person"></i>
+                ID: {{cOne[0].customer_id}}
+              </a>
+              <a href="#" class="item item-icon-left">
+                <i class="icon ion-social-usd-outline"></i>
+                ${{cOne[0].balance}}
+              </a>
+              <a href="#" class="item item-icon-left">
+                <i class="icon ion-card"></i>
+                {{cOne[0].type}}
+              </a>
+              </div>
+
+               <a href="#" class="item item-icon-left">
+             
+              <label class="item item-input item-select">
+                <div class="input-label">
+                  <b>Charities</b>
+                </div>
+                <select>
+                  <option>Red Cross</option>
+                  <option selected>Girls who code</option>
+                  <option >Donald Trump's Campaign</option>
+                </select>
+              </label>
+              </a>
+            </div>
+            <button ng-click="withdraw()">Posting</button>
             </div>
         </div>
     </ion-content>

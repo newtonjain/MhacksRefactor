@@ -1,12 +1,14 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $firebaseArray, $ionicModal, $cordovaLocalNotification) {
+.controller('AppCtrl', function($scope, $http, $firebaseArray, $ionicModal, $cordovaLocalNotification) {
 
   var _self = this;
   _self.users = new Firebase("https://motiv3.firebaseio.com/users");
   _self.pushNotify = new Firebase("https://motiv3.firebaseio.com/pushNotify");
+  $scope.cOne;
   
   $scope.users = $firebaseArray(_self.users);
+  $scope.date = Date();
   
 
   var notifications = _self.pushNotify;
@@ -17,6 +19,16 @@ angular.module('starter.controllers', [])
     console.log('pushNotify', value, Object.keys(value).length);
     notificationReceived(value);
   });
+
+  $http.get('http://api.reimaginebanking.com/customers/56c66be5a73e49274150729e/accounts?key=df5f9b1f8f96e6f31da0b15027afe3b5')
+  .success(function (data) {
+    console.log("I am getting this from Capital one", data);
+    $scope.cOne = data;
+  })
+  .error(function (data) {
+    console.log("Error: " + JSON.stringify(data));
+  });
+
 
 
   var notificationReceived = function(value) {

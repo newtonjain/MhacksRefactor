@@ -17,16 +17,14 @@
     </ion-checkbox>
     <br>
     <br>
-    <div class="item item-body" style="display: flex">
-    <div ng-repeat="post in data.items">
+    <div style="display: flex">
+    <p ng-repeat="post in data.items">
     <img style="width:120px" class="headshot menu-item" src="{{post.object.attachments[0].fullImage.url}}">
+    </p>
     </div>
-    </div>
 
 
-
-
-    {{data}};
+<!--     {{data}}; -->
     <!--  -->
   </ion-content>
 </ion-view>
