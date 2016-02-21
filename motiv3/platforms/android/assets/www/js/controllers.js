@@ -4,10 +4,14 @@ angular.module('starter.controllers', [])
 
   var _self = this;
   _self.users = new Firebase("https://motiv3.firebaseio.com/users");
-  _self.pushNotify = new Firebase("https://motiv3.firebaseio.com/pushNotify");
+  _self.Goals = new Firebase("https://motiv3.firebaseio.com/Goals");
   $scope.cOne;
+  $scope.allDone;
   
+  $scope.Goals;
   $scope.users = $firebaseArray(_self.users);
+  console.log('users', $scope.users);
+
   $scope.date = new Date();
 
   $scope.camera = function() {
@@ -23,16 +27,6 @@ angular.module('starter.controllers', [])
   function onError(data) {
     console.log('here is the error', data);
   }
-  
-
-  var notifications = _self.pushNotify;
-
-  notifications.on('value', function(dataSnapshot) {
-    var value = dataSnapshot.val();
-
-    console.log('pushNotify', value, Object.keys(value).length);
-    notificationReceived(value);
-  });
 
   $http.get('http://api.reimaginebanking.com/customers/56c66be5a73e49274150729e/accounts?key=df5f9b1f8f96e6f31da0b15027afe3b5')
   .success(function (data) {
@@ -73,26 +67,26 @@ angular.module('starter.controllers', [])
     }
 
 
-  var notificationReceived = function(value) {
-    var now = new Date().getTime();
-    var date = new Date();
-    var _10SecondsFromNow = new Date(now + 30 * 1000);
-    var notificationDate = new Date(value[1].Time);
-    console.log('here and now',_10SecondsFromNow, notificationDate);
+  // var notificationReceived = function(value) {
+  //   var now = new Date().getTime();
+  //   var date = new Date();
+  //   var _10SecondsFromNow = new Date(now + 30 * 1000);
+  //   var notificationDate = new Date(value[1].Time);
+  //   console.log('here and now',_10SecondsFromNow, notificationDate);
 
-    angular.forEach(value, function(value, key) {
-      console.log(key,': ',value);
+  //   angular.forEach(value, function(value, key) {
+  //     console.log(key,': ',value);
 
-      if(value.Activate) {
-        $cordovaLocalNotification.schedule({
-        id: key,
-        title: value.Title,
-        text: value.Body,
-        firstAt: notificationDate
-        });
-      }
-    });
-  }
+  //     if(value.Activate) {
+  //       $cordovaLocalNotification.schedule({
+  //       id: key,
+  //       title: value.Title,
+  //       text: value.Body,
+  //       firstAt: notificationDate
+  //       });
+  //     }
+  //   });
+  // }
 
   //Opens the login modal as soon as the controller initializes
   $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -135,6 +129,7 @@ angular.module('starter.controllers', [])
     var ref = _self.users;
     ref.once("value", function(allUsersSnapshot) {
       allUsersSnapshot.forEach(function(userSnapshot) {
+        console.log('usersnapshot', userSnapshot);
         var name = userSnapshot.child("username").val();
          console.log('name = ', name);
          if(name == $scope.authData.displayName) {
@@ -155,39 +150,92 @@ angular.module('starter.controllers', [])
             });
         }
     });
-
     $scope.index = $scope.users.$indexFor($scope.key);
+    if($scope.users[$scope.index].Goals){
+
+    $scope.Goals = $scope.users[$scope.index].Goals;
+    } else {
+      $scope.Goals = {};
+    }
+    console.log('/////', $scope.Goals, Object.keys($scope.Goals).length);
   };
 })
 
 
-
-
 .controller('FeedbackCtrl', function($scope, $http, $window, $ionicSlideBoxDelegate, $ionicModal) {
   $scope.newGoal={};
+  $scope.surveySubmitted = false;
 
-  $scope.devList = [
-    { text: "Go to the Gym", checked: true },
-    { text: "Wake up early", checked: false },
-    { text: "Eat healthy", checked: false }
-  ];
+  console.log('///', $scope.Goals);
+  // if($scope.users[$scope.index].Goals.length){
+
+  // }
+  $scope.devList = $scope.Goals || {};
 
   $scope.adding = function(goal) {
     if(goal) {
-      $scope.devList.push({text: goal, checked: false});
+      if(Object.keys($scope.Goals).length <3) {
+      if(Object.keys($scope.Goals).length == 0) {
+      $scope.Goals.One = {Name: goal, Status: false};
+      } else if(Object.keys($scope.Goals).length == 1) {
+      $scope.Goals.Two = {Name: goal, Status: false};
+      } else if(Object.keys($scope.Goals).length == 2) {
+      $scope.Goals.Three = {Name: goal, Status: false};
+      }
+    } else {
+      alert('only 3 goals allowed');
     }
   }
+  $scope.goal = "";
+}
 
+  $scope.submitSurvey = function() {
+      var send={};
+
+    $scope.users[$scope.index].Goals = $scope.Goals;
+    console.log('///', $scope.users[$scope.index].Goals);
+
+    $scope.users.$save($scope.index).then(function() {
+        //$scope.modal.show();
+        $scope.surveySubmitted = true;
+        });
+
+  }
+
+$scope.doRefresh = function() {
 $http.get('https://www.googleapis.com/plus/v1/people/101275194113117307949/activities/public?fields=items%28object%2Fattachments%2FfullImage%2Furl%2Ctitle%29&key=AIzaSyCVVfJSqBg31bhwX_KGMp4mMGQF-kRQ8wQ')
-.success(function (data) {
-  console.log("I am getting data", data);
-  $scope.data = data;
+.success(function (gpictures) {
+  console.log("I am getting data", gpictures);
+  $scope.images = gpictures.items;
+  $scope.$broadcast('scroll.refreshComplete');
 })
 .error(function (data) {
   console.log("Error: " + JSON.stringify(data));
 });
 
-    
+}
+
+$scope.checkGoals = function() {
+  var len = Object.keys($scope.Goals).length;
+  var abc;
+    if($scope.Goals.One.Status == false ){
+      abc = false;
+      console.log('a/', abc, $scope.Goals.One.Status);
+    } else if($scope.Goals.Two.Status == false ){
+      abc = false;
+      console.log('b//',abc, $scope.Goals.Two.Status);
+    }else if($scope.Goals.Three.Status == false ){
+      abc = false;
+      console.log('c////',abc,  $scope.Goals.Three.Status);
+    } else {
+       abc = true;
+    }
+
+    if(!abc){
+      $scope.withdraw();
+    }
+}
+
 
 })
 

@@ -24,6 +24,13 @@
     border-radius: 180px;
 }
 
+.headshot2 {
+    display: block;
+    margin: 0 auto;
+    width: 100px;
+    height: auto;
+    border-radius: 18px;
+}
 .padding_vertical {
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -358,4 +365,8 @@ a.download:hover, a.follow:hover {
 
 .flex {
   display: flex;
+}
+
+.padding {
+  padding: 10px;
 }
