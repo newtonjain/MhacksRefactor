@@ -1,12 +1,28 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $firebaseArray, $ionicModal, $cordovaLocalNotification) {
+.controller('AppCtrl', function($scope, $http, $window, $firebaseArray, $ionicModal, $cordovaLocalNotification) {
 
   var _self = this;
   _self.users = new Firebase("https://motiv3.firebaseio.com/users");
   _self.pushNotify = new Firebase("https://motiv3.firebaseio.com/pushNotify");
+  $scope.cOne;
   
   $scope.users = $firebaseArray(_self.users);
+  $scope.date = new Date();
+
+  $scope.camera = function() {
+    $window.navigator.camera.getPicture(onSuccess, onError);
+  }
+
+  function onSuccess(imageData) {
+     var image = document.getElementById('myImage');
+   image.src = "data:image/jpeg;base64," + imageData;
+
+  }
+
+  function onError(data) {
+    console.log('here is the error', data);
+  }
   
 
   var notifications = _self.pushNotify;
@@ -17,6 +33,44 @@ angular.module('starter.controllers', [])
     console.log('pushNotify', value, Object.keys(value).length);
     notificationReceived(value);
   });
+
+  $http.get('http://api.reimaginebanking.com/customers/56c66be5a73e49274150729e/accounts?key=df5f9b1f8f96e6f31da0b15027afe3b5')
+  .success(function (data) {
+    console.log("I am getting this from Capital one", data);
+    $scope.cOne = data;
+  })
+  .error(function (data) {
+    console.log("Error: " + JSON.stringify(data));
+  });
+
+    $scope.withdraw = function() {
+    var toSend = {
+       "merchant_id":"56c66be6a73e492741507676",
+        "medium": "balance",
+        "purchase_date": "2016-02-21",
+        "amount": 3,
+        "status": "pending",
+        "description": "Penalty"
+      };
+
+
+
+    $http.post('http://api.reimaginebanking.com/accounts/56c66be6a73e492741507b91/purchases?key=df5f9b1f8f96e6f31da0b15027afe3b5', toSend)
+    .success(function (data) {
+    console.log("I am posting this from Capital one", data);
+    $scope.posting = data;
+  })
+  .error(function (data) {
+    console.log("Error: " + JSON.stringify(data));
+  });
+
+   // .success(function (data, status, headers, config) {
+   //            console.log('picking up', JSON.stringify(data), JSON.stringify(status));
+   //          }).error(function (data, status, headers, config) {
+   //              console.log('There was a problem posting your information' + JSON.stringify(data) + JSON.stringify(status));
+   //          });
+
+    }
 
 
   var notificationReceived = function(value) {
@@ -106,7 +160,10 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('FeedbackCtrl', function($scope, $window, $ionicSlideBoxDelegate, $ionicModal) {
+
+
+
+.controller('FeedbackCtrl', function($scope, $http, $window, $ionicSlideBoxDelegate, $ionicModal) {
   $scope.newGoal={};
 
   $scope.devList = [
@@ -120,6 +177,16 @@ angular.module('starter.controllers', [])
       $scope.devList.push({text: goal, checked: false});
     }
   }
+
+$http.get('https://www.googleapis.com/plus/v1/people/101275194113117307949/activities/public?fields=items%28object%2Fattachments%2FfullImage%2Furl%2Ctitle%29&key=AIzaSyCVVfJSqBg31bhwX_KGMp4mMGQF-kRQ8wQ')
+.success(function (data) {
+  console.log("I am getting data", data);
+  $scope.data = data;
+})
+.error(function (data) {
+  console.log("Error: " + JSON.stringify(data));
+});
+
     
 
 })

@@ -1,18 +1,14 @@
 <ion-modal-viewn class='modal_full_screen'>
   <ion-header-bar>
-    <div class="title" ng-show="!authData">Login</div>
-    
-    <div class="title" ng-show="authData">
-      Hello {{authData.displayName}}!
-    </div>
+    <div class="title">Login</div>
     
   </ion-header-bar>
   <ion-content>
   <br>
   <br>
-  <center><h2 style="border:2px solid black; width: 200px">Pheedback</h2></center>
+  <center><h2 style="border:2px solid black; width: 200px">Motiv3</h2></center>
   <br>
-  <center><img src="img/pheedbackguy.png" style=" width:325px"></center>
+  <center><img src="img/doit.gif" style=" width:325px"></center>
 
   <br>
 
@@ -20,9 +16,15 @@
     <center><img src="img/fb.png" style="width:250px"></img></center>
   </div>
 
-  <div ng-show="authData" ng-click="savefbinfo()" target="_blank">
-    <center><img src="img/enter.png" style="width:100px"></img></center>
+
+   <div class="card" ng-show="authData" ng-click="savefbinfo()" target="_blank">
+    <div class="item item-text-wrap item-icon-right item-avatar">
+      <img ng-src="{{authData.profileImageURL}}">
+      Hello {{authData.displayName}}!
+      <i class="icon ion-chevron-right icon-accessory"></i>
+    </div>
   </div>
+
 
   </ion-content>
 </ion-modal-view>

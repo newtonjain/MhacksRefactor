@@ -1,12 +1,28 @@
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $firebaseArray, $ionicModal, $cordovaLocalNotification) {
+.controller('AppCtrl', function($scope, $http, $window, $firebaseArray, $ionicModal, $cordovaLocalNotification) {
 
   var _self = this;
-  _self.users = new Firebase("https://poll2roll.firebaseio.com/users");
-  _self.pushNotify = new Firebase("https://poll2roll.firebaseio.com/pushNotify");
+  _self.users = new Firebase("https://motiv3.firebaseio.com/users");
+  _self.pushNotify = new Firebase("https://motiv3.firebaseio.com/pushNotify");
+  $scope.cOne;
   
   $scope.users = $firebaseArray(_self.users);
+  $scope.date = new Date();
+
+  $scope.camera = function() {
+    $window.navigator.camera.getPicture(onSuccess, onError);
+  }
+
+  function onSuccess(imageData) {
+     var image = document.getElementById('myImage');
+   image.src = "data:image/jpeg;base64," + imageData;
+
+  }
+
+  function onError(data) {
+    console.log('here is the error', data);
+  }
   
 
   var notifications = _self.pushNotify;
@@ -17,6 +33,44 @@ angular.module('starter.controllers', [])
     console.log('pushNotify', value, Object.keys(value).length);
     notificationReceived(value);
   });
+
+  $http.get('http://api.reimaginebanking.com/customers/56c66be5a73e49274150729e/accounts?key=df5f9b1f8f96e6f31da0b15027afe3b5')
+  .success(function (data) {
+    console.log("I am getting this from Capital one", data);
+    $scope.cOne = data;
+  })
+  .error(function (data) {
+    console.log("Error: " + JSON.stringify(data));
+  });
+
+    $scope.withdraw = function() {
+    var toSend = {
+       "merchant_id":"56c66be6a73e492741507676",
+        "medium": "balance",
+        "purchase_date": "2016-02-21",
+        "amount": 3,
+        "status": "pending",
+        "description": "Penalty"
+      };
+
+
+
+    $http.post('http://api.reimaginebanking.com/accounts/56c66be6a73e492741507b91/purchases?key=df5f9b1f8f96e6f31da0b15027afe3b5', toSend)
+    .success(function (data) {
+    console.log("I am posting this from Capital one", data);
+    $scope.posting = data;
+  })
+  .error(function (data) {
+    console.log("Error: " + JSON.stringify(data));
+  });
+
+   // .success(function (data, status, headers, config) {
+   //            console.log('picking up', JSON.stringify(data), JSON.stringify(status));
+   //          }).error(function (data, status, headers, config) {
+   //              console.log('There was a problem posting your information' + JSON.stringify(data) + JSON.stringify(status));
+   //          });
+
+    }
 
 
   var notificationReceived = function(value) {
@@ -106,227 +160,35 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('FeedbackCtrl', function($scope, $window, $ionicSlideBoxDelegate, $ionicModal, Questions) {
-    var _self = this;
-    var X;
-    var Y;
-    var Z;
+
+
+
+.controller('FeedbackCtrl', function($scope, $http, $window, $ionicSlideBoxDelegate, $ionicModal) {
+  $scope.newGoal={};
+
+  $scope.devList = [
+    { text: "Go to the Gym", checked: true },
+    { text: "Wake up early", checked: false },
+    { text: "Eat healthy", checked: false }
+  ];
+
+  $scope.adding = function(goal) {
+    if(goal) {
+      $scope.devList.push({text: goal, checked: false});
+    }
+  }
+
+$http.get('https://www.googleapis.com/plus/v1/people/101275194113117307949/activities/public?fields=items%28object%2Fattachments%2FfullImage%2Furl%2Ctitle%29&key=AIzaSyCVVfJSqBg31bhwX_KGMp4mMGQF-kRQ8wQ')
+.success(function (data) {
+  console.log("I am getting data", data);
+  $scope.data = data;
+})
+.error(function (data) {
+  console.log("Error: " + JSON.stringify(data));
+});
+
     
-    $scope.dynamic = 5;
-    $scope.max = 10;
-    _self.surveySubmitted = false;
-    $scope.prev = 0;
-    
-    $scope.questions = Questions.all();
 
-    $scope.slideHasChanged = function(index) {
-        console.log('slider changed for : ', index);
-
-        if(!$scope.questions[$scope.prev].Rating){
-            $scope.questions[$scope.prev].Rating = $scope.dynamic;
-        }
-        
-        if(index<$scope.questions.length) {
-            $scope.prev = index;
-            $scope.dynamic = 5;
-        } 
-        else {
-            console.log('no change for index: ', index);
-        }
-    }
-
-    $scope.closeLogin = function() {
-        $scope.modal.hide();
-    };
-
-    $scope.rateAgain = function() {
-        $scope.dynamic = $scope.questions[$scope.prev].Rating;
-        $scope.questions[$scope.prev].Rating = null;
-    }
-
-    $ionicModal.fromTemplateUrl('templates/surveyComplete.html', {
-        scope: $scope
-    }).then(function(modal) {
-        $scope.modal = modal;
-    });
-
-    $scope.submitSurvey = function() {
-        var send={};
-
-        for(var i = 0; i < $scope.questions.length; i++) {
-            var val = $scope.questions[i];
-            send[val.$id] = val.Rating || 'NA';
-        }
-
-      $scope.users[$scope.index].feedback = send;
-      console.log('///', $scope.users[$scope.index].feedback);
-
-      $scope.users.$save($scope.index).then(function() {
-          $scope.modal.show();
-          _self.surveySubmitted = true;
-          });
-    }
-
-    $scope.previous = function() {
-        $ionicSlideBoxDelegate.previous();
-    }
-
-    $scope.next = function() {
-        $ionicSlideBoxDelegate.next();
-    }
-
-    function onSuccess(acceleration) {
-        X = acceleration.x;
-        Y = acceleration.y;
-        Z = acceleration.z;
-
-        if(X < -3) {
-            $scope.dynamic += 1;
-        } 
-        
-        if (X > 3) {
-            $scope.dynamic -= 1;
-        } 
-
-        if($scope.dynamic > 10) {
-            $scope.dynamic = 10;
-        } else if ($scope.dynamic < 0 || $scope.dynamic == 0) {
-            $scope.dynamic = 1;
-        }
-        
-        var type = "info";
-
-        if ($scope.dynamic < 3) {
-            type = 'danger';
-        } else if ($scope.dynamic > 7) {
-            type = 'success';
-        }
-        
-        $scope.detectShake(acceleration); 
-        $scope.type = type;
-        $scope.$apply();
-    }
-
-    function onError() {
-        console.log('accelerometer not working');
-    }
-
-    var options = { frequency: 500 };  // Update every 500 milliseconds
-    navigator.accelerometer.watchAcceleration(onSuccess, onError, options);
-
-    // watch Acceleration
-    $scope.options = { 
-        frequency: 100, // Measure every 100ms
-        deviation : 30  // We'll use deviation to determine the shake event, best values in the range between 25 and 30
-    };
-
-    // Current measurements
-    $scope.measurements = {
-        x : null,
-        y : null,
-        z : null,
-        timestamp : null
-    }
-
-    // Previous measurements  
-    $scope.previousMeasurements = {
-        x : null,
-        y : null,
-        z : null,
-        timestamp : null
-    } 
-  
-    // Detect shake method    
-    $scope.detectShake = function(result) { 
-
-        //Object to hold measurement difference between current and old data
-        var measurementsChange = {};
-
-        // Calculate measurement change only if we have two sets of data, current and old
-        if ($scope.previousMeasurements.x !== null) {
-            measurementsChange.x = Math.abs($scope.previousMeasurements.x, result.x);
-            measurementsChange.y = Math.abs($scope.previousMeasurements.y, result.y);
-            measurementsChange.z = Math.abs($scope.previousMeasurements.z, result.z);
-        }
-
-        // If measurement change is bigger then predefined deviation
-        if (measurementsChange.x + measurementsChange.y + measurementsChange.z > $scope.options.deviation) {
-            //$scope.stopWatching();  // Stop watching because it will start triggering like hell
-            console.log('Shake detected'); // shake detected
-            //setTimeout($scope.startWatching(), 1000);  // Again start watching after 1 sex
-            $scope.submitSurvey();
-
-            // Clean previous measurements after succesfull shake detection, so we can do it next time
-            $scope.previousMeasurements = { 
-                x: null, 
-                y: null, 
-                z: null
-            }       
-
-        } else {
-            // On first measurements set it as the previous one
-            $scope.previousMeasurements = {
-                x: result.x,
-                y: result.y,
-                z: result.z
-            }
-        }         
-    }
-
-    var slide_amount = $('.feedbackform_slide').length; // Slide count
-    var window_width = $(window).width(); // Init window width
-    var current_x = 0; // Current x value of slides
-    var current_position = 0; // Current position
-
-    $('.feedbackform').css('width',window_width * slide_amount + 'px'); // Set up the slides
-    $('.feedbackform_slide').css('width',window_width + 'px'); // Set up the slides
-
-    $(window).resize(function(){ // Responisivity
-        var window_width = $(window).width(); // Window width
-        $('.feedbackform').css('width',window_width * slide_amount + 'px'); // Re jig slide sizes
-        $('.feedbackform_slide').css('width',window_width + 'px'); // Re jig slide sizes
-        current_position = 0; // Reset
-        current_x = current_position * window_width; // Reset
-        $('.feedbackform_slide').css('right',current_x); // Reset
-        $('.active_slide').removeClass('active_slide')
-        $('.first').addClass('active_slide');
-    });
-
-    // Messages
-    var active_array = ['terrible','bad','not great','average','good','excellent','amazing']; // Panda array
-    var smile_value;
-
-    var active_smile = 'panda'; // Get active smile
-    setInterval(function() {
-        // Change smile svg coords
-        smile_value = $scope.questions[$scope.prev].Rating*2 || $scope.dynamic*2; // Get the value
-        $('.smile.' + active_smile + ' path').attr('d','M10 10 C 20 ' + smile_value + ', 40 ' + smile_value + ', 50 10');
-
-        $('.sb.' + active_smile).css('opacity',(smile_value/60)); // Pattern opacity
-        $('.grad.' + active_smile).css('opacity',(smile_value/40)); // Gradient opacity
-        if(smile_value == 0){
-            // Worst
-            $('.rating.' + active_smile + ' span').html(active_array[0]); // Set message
-        } else if(smile_value < 5 && smile_value > 0){
-            // Bad
-            $('.rating.' + active_smile + ' span').html(active_array[1]); // Set message
-        } else if(smile_value < 10 && smile_value > 5){
-            // Not good
-            $('.rating.' + active_smile + ' span').html(active_array[2]); // Set message
-        } else if(smile_value == 10){
-            // Average
-            $('.rating.' + active_smile + ' span').html(active_array[3]); // Set message
-        } else if(smile_value > 10 && smile_value < 15){
-            // Good
-            $('.rating.' + active_smile + ' span').html(active_array[4]); // Set message
-        } else if(smile_value > 15 && smile_value < 20){
-            // Very good
-            $('.rating.' + active_smile + ' span').html(active_array[5]); // Set message
-        } else if(smile_value== 20){
-            // Amazing
-            $('.rating.' + active_smile + ' span').html(active_array[6]); // Set message
-        }        
-    }, 200)
 })
 
 
