@@ -1,0 +1,23 @@
+<ion-view view-title="Pictures">
+  <ion-content class="padding">
+  <ion-refresher
+    pulling-text="Pull to refresh..."
+    on-refresh="doRefresh()">
+  </ion-refresher>
+  <div ng-hide="images"><h3><center>Pull to Refresh</center></h3></div>
+     <div class="row" ng-repeat="image in images" ng-if="$index % 4 === 0">
+        <div class="col col-25" ng-if="$index < images.length">
+            <img ng-src="{{images[$index].object.attachments[0].fullImage.url}}" width="100%" />
+        </div>
+        <div class="col col-25" ng-if="$index + 1 < images.length">
+            <img ng-src="{{images[$index + 1].object.attachments[0].fullImage.url}}" width="100%" />
+        </div>
+        <div class="col col-25" ng-if="$index + 2 < images.length">
+            <img ng-src="{{images[$index + 2].object.attachments[0].fullImage.url}}" width="100%" />
+        </div>
+        <div class="col col-25" ng-if="$index + 3 < images.length">
+            <img ng-src="{{images[$index + 3].object.attachments[0].fullImage.url}}" width="100%" />
+        </div>
+    </div>
+  </ion-content>
+</ion-view>

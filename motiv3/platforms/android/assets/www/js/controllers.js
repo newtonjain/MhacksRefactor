@@ -57,36 +57,7 @@ angular.module('starter.controllers', [])
   .error(function (data) {
     console.log("Error: " + JSON.stringify(data));
   });
-
-   // .success(function (data, status, headers, config) {
-   //            console.log('picking up', JSON.stringify(data), JSON.stringify(status));
-   //          }).error(function (data, status, headers, config) {
-   //              console.log('There was a problem posting your information' + JSON.stringify(data) + JSON.stringify(status));
-   //          });
-
     }
-
-
-  // var notificationReceived = function(value) {
-  //   var now = new Date().getTime();
-  //   var date = new Date();
-  //   var _10SecondsFromNow = new Date(now + 30 * 1000);
-  //   var notificationDate = new Date(value[1].Time);
-  //   console.log('here and now',_10SecondsFromNow, notificationDate);
-
-  //   angular.forEach(value, function(value, key) {
-  //     console.log(key,': ',value);
-
-  //     if(value.Activate) {
-  //       $cordovaLocalNotification.schedule({
-  //       id: key,
-  //       title: value.Title,
-  //       text: value.Body,
-  //       firstAt: notificationDate
-  //       });
-  //     }
-  //   });
-  // }
 
   //Opens the login modal as soon as the controller initializes
   $ionicModal.fromTemplateUrl('templates/login.html', {

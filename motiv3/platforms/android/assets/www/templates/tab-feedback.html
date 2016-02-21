@@ -1,9 +1,5 @@
 <ion-view class="positive" view-title="What are your goals for today?">
   <ion-content>
-  <ion-refresher
-    pulling-text="Pull to refresh..."
-    on-refresh="doRefresh()">
-  </ion-refresher>
   <div class="list">
 
   <div class="item item-input-inset">
@@ -17,7 +13,7 @@
 </div>
 
    <ion-checkbox ng-repeat="item in Goals" ng-model="item.Status" ng-checked="item.Status">
-        {{ item.Name }}, {{item.Status}}
+        {{ item.Name }}
     </ion-checkbox>
     <br>
     <br>
@@ -27,22 +23,6 @@
     <img style="width:120px" class="headshot2 menu-item padding" src="{{post.object.attachments[0].fullImage.url}}">
     </p>
     </div>
-
-     <div class="row" ng-repeat="image in images" ng-if="$index % 4 === 0">
-        <div class="col col-25" ng-if="$index < images.length">
-            <img ng-src="{{images[$index].object.attachments[0].fullImage.url}}" width="100%" />
-        </div>
-        <div class="col col-25" ng-if="$index + 1 < images.length">
-            <img ng-src="{{images[$index + 1].object.attachments[0].fullImage.url}}" width="100%" />
-        </div>
-        <div class="col col-25" ng-if="$index + 2 < images.length">
-            <img ng-src="{{images[$index + 2].object.attachments[0].fullImage.url}}" width="100%" />
-        </div>
-        <div class="col col-25" ng-if="$index + 3 < images.length">
-            <img ng-src="{{images[$index + 3].object.attachments[0].fullImage.url}}" width="100%" />
-        </div>
-    </div>
-
 
 <button ng-click="checkGoals(); submitSurvey()">Day's End</button>
 
