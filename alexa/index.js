@@ -66,7 +66,7 @@ function getWelcomeResponse(response) {
     // If we wanted to initialize the session to have some attributes we could add those here.
     var cardTitle = "Welcome to Motive, your very own personal motivation-donation system";
     var repromptText =  "Ask me, What are my goals for today? Or, ask me, What are my achievements!";
-    var speechText = "Welcome to Motive. I can tell you what your goals are for the day, and keep you motivated. Ask me, What are my goals for today?";
+    var speechText = "Welcome to Motive, your very own personal motivation-donation system.";
     var cardOutput = "I can tell you what your goals are for the day, and keep you motivated. Ask me, What are my goals for today?";
     // If the user either does not reply to the welcome message or says something that is not
     // understood, they will be prompted again with this text.
@@ -98,17 +98,17 @@ function goalIntentRequest(intent, session, response) {
         console.log(events[2]);
         console.log(events[4]);
 
-        var speech = "Here are your goals for today: "
-             + "Your first goal is. " + events[0] 
-             + " " 
-             + "Your second goal is. " + events[2]
-             + " " 
-             +" and your third goal is. " + events[4]
-             +" "
-             +"Have a wonderful day!";
+        var speech = "Here are your goals for today: " + "Your first goal is " + events[0]  + ", " ;
+        if(events[2] != undefined){
+            speech += "Your second goal is " + events[2] + ", " ;
+        }
+        if(events[4] != undefined){    
+            speech += " and your third goal is. " + events[4] + ".";
+        }
+        speech += " Have a wonderful day!";
 
-        response.askWithCard(speech, "Goals for the Day", "Goal One: " + events[0] + "\nGoal Two: " + events[2] + "\nGoal Three: " + events[4]);
-        return;
+        response.tellWithCard(speech, "Goals for the Day", "Goal One: " + events[0] + "\nGoal Two: " + events[2] + "\nGoal Three: " + events[4]);
+ 
     });
 }
 
@@ -116,51 +116,77 @@ function goalIntentRequest(intent, session, response) {
 function achievementIntentRequest(intent, session, response) {
     
     getJsonEventsFromWikipedia(function (events) {
-        
+
+
         var speech = "";
         var goalFail = 0;
 
-        //CHECK THIS
-        if (events[1] == "False") {
-            goalFail += 1;
-
-        }
-        if (events[3]) == "False") {
-            goalFail += 3;
-        }
-        if (events[5]) == "False") {
-            goalFail += 5;
-        }
-
-        if (goalFail == 0) {
-            speech = "Amazing work today! You completed all of your goals!";
-        }
-
-        var oneSpeech = "Great work! You completed two out of three goals. Tommorow, I'm certain that you will make time to ";
-
-        if (goalFail < 4) {
-            speech = oneSpeech + events[goalFail];
-        }
-
-        var twoSpeech = "Let's do better tomorrow! You did not complete two of your goals, to:  ";
-        var twoSpeechctd = ". Nonetheless, I'm proud of you for prioritizing your goal to: ";
-            
-        if (goalFail == 4) {
-            speech = twoSpeech + events[1] + "and" + events[3] + twoSpeechctd + events[5];
-        } else if { (goalFail == 6) {
-            speech = twoSpeech + events[1] + "and" + events[5] + twoSpeechctd + events[3];
-        } else {
-            speech = twoSpeech + events[3] + "and" + events[5] + twoSpeechctd + events[1];
-        }
-
-        if (goalFail == 9) {
-            speech = "We all have days that we miss the mark."
+        //ONLY ONE GOAL
+        if(events[2] == undefined){
+         
+            if(events[1])//one goal met
+                speech = "Amazing work today! You completed all of your goals!";
+            else
+                 speech = "We all have days that we miss the mark."
                 + " You may not have completed your goals, "
                 + "but you'll be making a generous donation to YOUR CHARITY HERE";
+            
         }
+        else if(events[4] == undefined){//TWO GOALS
+            
+            if(events[1] && events[3])//both goals met
+                speech = "Amazing work today! You completed all of your goals!";
+            else if(events[1] && !events[3])
+                speech = "Great work! You completed one out of three goals. Tomorrow, I'm certain that you will make time to " + events[3];
+            else if(events[3] && !events[1])
+                speech = "Great work! You completed one out of three goals. Tomorrow, I'm certain that you will make time to " + events[1]; 
+            else 
+                speech = "We all have days that we miss the mark."
+                + " You may not have completed your goals, "
+                + "but you'll be making a generous donation to YOUR CHARITY HERE";
 
-        response.askWithCard(speech, "Achievements", "Achievements");
-        return;
+        }
+        else{
+            if (!events[1]) {
+                goalFail += 1;
+
+            }
+            if (!events[3]) {
+                goalFail += 3;
+            }
+            if (!events[5]) {
+                goalFail += 5;
+            }
+
+            if (goalFail == 0) {//all are true
+                speech = "Amazing work today! You completed all of your goals!";
+            }
+
+            var oneSpeech = "Great work! You completed two out of three goals. Tomorrow, I'm certain that you will make time to ";
+            if (goalFail == 1 || goalFail == 3 || goalFail == 5) {//one of them is false & other two are true
+                speech = oneSpeech + events[goalFail-1];
+            }
+
+            //two are false, one is true
+            var twoSpeech = "Let's do better tomorrow! You did not complete two of your goals, to:  ";
+            var twoSpeechctd = ". Nonetheless, I'm proud of you for prioritizing your goal to: ";
+                
+            if (goalFail == 4) {
+                speech = twoSpeech + events[0] + " and " + events[2] + twoSpeechctd + events[4];
+            } else if  (goalFail == 6) {
+                speech = twoSpeech + events[0] + " and " + events[4] + twoSpeechctd + events[2];
+            } else if  (goalFail == 8) {
+                speech = twoSpeech + events[2] + " and " + events[4] + twoSpeechctd + events[0];
+            }
+
+            if (goalFail == 9) {
+                speech = "We all have days that we miss the mark."
+                    + " You may not have completed your goals, "
+                    + "but you'll be making a generous donation to YOUR CHARITY";
+            }
+        }
+        response.tellWithCard(speech, "Achievements", "Achievements");
+ 
     });
 }
 
@@ -190,12 +216,21 @@ function parseJson(inputText) {
     var x = JSON.parse(inputText);
     console.log(x);
     var retArr = [];
-    retArr.push(x.Goals.One.Name);
-    retArr.push(x.Goals.One.Status);
-    retArr.push(x.Goals.Two.Name);
-    retArr.push(x.Goals.Two.Status);
-    retArr.push(x.Goals.Three.Name);
-    retArr.push(x.Goals.Three.Status);
+
+    if(x.Goals.One != undefined){
+        retArr.push(x.Goals.One.Name);
+        retArr.push(x.Goals.One.Status);
+    }
+    
+    if(x.Goals.Two != undefined){
+        retArr.push(x.Goals.Two.Name);
+        retArr.push(x.Goals.Two.Status);
+    }
+
+    if(x.Goals.Three != undefined){
+        retArr.push(x.Goals.Three.Name);
+        retArr.push(x.Goals.Three.Status);
+    }
 
     return retArr;
 }
@@ -208,20 +243,15 @@ exports.handler = function (event, context) {
     // Create an instance of the Motiv Skill.
     var skill = new MotivSkill();
     skill.execute(event, context);
-
-    //console.log('Received event:', JSON.stringify(event, null, 2));
-    console.log('value1 =', event.key1);
-    console.log('value2 =', event.key2);
-    console.log('value3 =', event.key3);
-    console.log('remaining time =', context.getRemainingTimeInMillis());
-    console.log('functionName =', context.functionName);
-    console.log('AWSrequestID =', context.awsRequestId);
-    console.log('logGroupName =', context.logGroupName);
-    console.log('logStreamName =', context.logStreamName);
-    console.log('clientContext =', context.clientContext);
-    if (typeof context.identity !== 'undefined') {
-        console.log('Cognity identity ID =', context.identity.cognitoIdentityId);
-    }    
-    context.succeed(event.key1);  // Echo back the first key value
-    // context.fail('Something went wrong');
+ 
+    // console.log('remaining time =', context.getRemainingTimeInMillis());
+    // console.log('functionName =', context.functionName);
+    // console.log('AWSrequestID =', context.awsRequestId);
+    // console.log('logGroupName =', context.logGroupName);
+    // console.log('logStreamName =', context.logStreamName);
+    // //console.log('clientContext =', context.clientContext);
+    // if (typeof context.identity !== 'undefined') {
+    //     console.log('Cognity identity ID =', context.identity.cognitoIdentityId);
+    // }    
+     // context.fail('Something went wrong');
 };
