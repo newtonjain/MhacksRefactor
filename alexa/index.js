@@ -1,171 +1,163 @@
-/**
-    Copyright 2014-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-    Licensed under the Apache License, Version 2.0 (the "License"). You may not use this file except in compliance with the License. A copy of the License is located at
-        http://aws.amazon.com/apache2.0/
-    or in the "license" file accompanying this file. This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-*/
-
-/**
- * This simple sample has no external dependencies or session management, and shows the most basic
- * example of how to create a Lambda function for handling Alexa Skill requests.
- *
- * Examples:
- * One-shot model:
- *  User: "Alexa, tell Greeter to say hello"
- *  Alexa: "Hello World!"
- */
 
 /**
  * App ID for the skill
  */
+var APP_ID = undefined; //replace with 'amzn1.echo-sdk-ams.app.[your-unique-value-here]';
 
-var APP_ID = "amzn1.echo-sdk-ams.app.cc1875b0-c39b-4303-9379-5546944359f7"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
+var https = require('https');
 
 /**
- * The AlexaSkill prototype and helper functions
+ * The AlexaSkill Module that has the AlexaSkill prototype and helper functions
  */
 var AlexaSkill = require('./AlexaSkill');
 
 /**
- * HelloWorld is a child of AlexaSkill.
- * To read more about inheritance in JavaScript, see the link below.
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Introduction_to_Object-Oriented_JavaScript#Inheritance
+ * URL prefix to download content
  */
-var HelloWorld = function () {
+var urlPrefix = 'https://motiv3.firebaseio.com/users/-KB-NfDzpYfAPxDPP1LJ.json';
+
+
+
+var MotivSkill = function() {
     AlexaSkill.call(this, APP_ID);
 };
 
 // Extend AlexaSkill
-HelloWorld.prototype = Object.create(AlexaSkill.prototype);
-HelloWorld.prototype.constructor = HelloWorld;
+MotivSkill.prototype = Object.create(AlexaSkill.prototype);
+MotivSkill.prototype.constructor = MotivSkill;
 
-HelloWorld.prototype.eventHandlers.onSessionStarted = function (sessionStartedRequest, session) {
-    console.log("HelloWorld onSessionStarted requestId: " + sessionStartedRequest.requestId
+MotivSkill.prototype.eventHandlers.onSessionStarted = function (sessionStartedRequest, session) {
+    console.log("MotivSkill onSessionStarted requestId: " + sessionStartedRequest.requestId
         + ", sessionId: " + session.sessionId);
-    // any initialization logic goes here
+
+    // any session init logic would go here
 };
 
-HelloWorld.prototype.eventHandlers.onLaunch = function (launchRequest, session, response) {
-    console.log("HelloWorld onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
-    // var speechOutput = "Welcome to the Alexa Skills Kit, you can say hello";
-    // var repromptText = "You can say hello";
-    // response.ask(speechOutput, repromptText);
-    handleWelcomeRequest(response);
-
+MotivSkill.prototype.eventHandlers.onLaunch = function (launchRequest, session, response) {
+    console.log("MotivSkill onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
+    getWelcomeResponse(response);
 };
 
-HelloWorld.prototype.eventHandlers.onSessionEnded = function (sessionEndedRequest, session) {
-    console.log("HelloWorld onSessionEnded requestId: " + sessionEndedRequest.requestId
+MotivSkill.prototype.eventHandlers.onSessionEnded = function (sessionEndedRequest, session) {
+    console.log("onSessionEnded requestId: " + sessionEndedRequest.requestId
         + ", sessionId: " + session.sessionId);
-    // any cleanup logic goes here
+
+    // any session cleanup logic would go here
 };
 
-HelloWorld.prototype.intentHandlers = {
-    // register custom intent handlers
-    "OneshotHelloWorldIntent": function (intent, session, response) {
-        handleOneshotHelloWorldRequest(intent, session, response);
+MotivSkill.prototype.intentHandlers = {
+
+    "GoalIntent": function (intent, session, response) {
+        goalIntentRequest(intent, session, response);
     },
-    "HelloWorldIntent": function (intent, session, response) {
-        response.tellWithCard("Hello World!", "Greeter", "Hello World!");
+    "AchievementIntent": function (intent, session, response) {
+        achievementIntentRequest(intent, session, response);
     },
     "AMAZON.HelpIntent": function (intent, session, response) {
         response.ask("You can say hello to me!", "You can say hello to me!");
     }
 };
 
-// Create the handler that responds to the Alexa Request.
-exports.handler = function (event, context) {
-    // Create an instance of the HelloWorld skill.
-    var helloWorld = new HelloWorld();
-    helloWorld.execute(event, context);
-};
+/**
+ * Function to handle the onLaunch skill behavior
+ */
 
+function getWelcomeResponse(response) {
+    // If we wanted to initialize the session to have some attributes we could add those here.
+    var cardTitle = "Welcome to Motive";
+    var repromptText = "I can tell you what your goals are for the day, and keep you motivated. Ask me, What are my goals for today?";
+    var speechText = "Welcome to Motive. I can tell you what your goals are for the day, and keep you motivated. Ask me, What are my goals for today?";
+    var cardOutput = "I can tell you what your goals are for the day, and keep you motivated. Ask me, What are my goals for today?";
+    // If the user either does not reply to the welcome message or says something that is not
+    // understood, they will be prompted again with this text.
 
-// ----------Motiv3 Domain Specific Buisness Logic ------------//
-
-var GOAL = {
-    'goal',
-    'goals'
-};
-
-var ACHIEVE = {
-    'achieve',
-    'achievement',
-    'achievements'
-};
-
-function handleWelcomeRequest(response) {
     var speechOutput = {
-        speech: "Welcome to Motive. ",
-        type: AlexaSkill.speechOutputType.PLAIN_TEXT
-    },
-    repromptOutput = {
-        speech: "I can tell you what your goals are"
-            + "for the day, and keep you motivated."
-            + "Ask me: What are my goals for today?",
+        speech: "<speak>" + speechText + "</speak>",
+        type: AlexaSkill.speechOutputType.SSML
+    };
+    var repromptOutput = {
+        speech: repromptText,
         type: AlexaSkill.speechOutputType.PLAIN_TEXT
     };
-
-    response.ask(speechOutput, repromptOutput);
+    response.askWithCard(speechOutput, repromptOutput, cardTitle, cardOutput);
 }
 
-function handleOneshotHelloWorldRequest(intent, response) {
-    var userResponse = getGoalFromIntent(intent),
-        repromptText,
-        speechOutput;
-    if (userResponse.error) {
-        //Did not understand user response
-        speechOutput = "I'm sorry, I didn't understand your request.";
-        repromptText = "You can ask: what are my goals for today?"
-                    + "Or, you can ask: what did I achieve today?";
-        response.ask(speechOutput, repromptText);
+/**
+ * Gets a poster prepares the speech to reply to the user.
+ */
+function goalIntentRequest(intent, session, response) {
+    
+    getJsonEventsFromWikipedia(function (events) {
+        
+
+        console.log(events[0]);
+        console.log(events[2]);
+        console.log(events[4]);
+
+        var speech = "Goals " + events[0] + events[2] + events[4];
+        response.askWithCard(speech, "", "card");
         return;
-    }
+    });
 }
 
 
-function getGoalFromIntent(intent, response) {
-    var goalSlot = intent.slots.Goal;
-    //testing for missing or provided but empty value slots
-    if (!goalSlot || !goalSlot.value) {
-        return {
-                error: true
-        }
-    } else {
-        //lookup the goal
-        if (GOAL[goalSlot.toLowerCase()]) {
+function achievementIntentRequest(intent, session, response) {
+    
+    getJsonEventsFromWikipedia(function (events) {
+        
 
-                makeGoalRequest(response);
-            
-            }else if (ACHIEVE[goalSlot.toLowerCase()]) {
-                
-                makeAchieveRequest(response);
-            }else{ 
+        console.log(events[0]);
+        console.log(events[1]);
+        console.log(events[2]);
+        console.log(events[3]);
+        console.log(events[4]);
+        console.log(events[5]);
 
-                return {
-                    error: true
-                }
-            }
-
-    }
-}
-
-function makeGoalRequest(response) {
-    var speechOutput;
-    speechOutput = "I am telling you about your goals.";
-    response.tellWithCard(speechOutput, "Motiv3", speechOutput);
-    return;
-}
-
-function makeAchieveRequest(response) {
-    var speechOutput;
-    speechOutput = "I am telling you about your achievements.";
-    response.tellWithCard(speechOutput, "Motiv3", speechOutput);
-    return;
+        var speech = "Goals " + events[0] + events[1] + events[2] + events[3] + events[4]+ events[5] ;
+        response.askWithCard(speech, "", "card");
+        return;
+    });
 }
 
 
+function getJsonEventsFromWikipedia(eventCallback) {
+    var url = urlPrefix ;
 
+    https.get(url, function(res) {
+        var body = '';
 
+        res.on('data', function (chunk) {
+            body += chunk;
+        });
 
+        res.on('end', function () {
+            var stringResult = parseJson(body);
+            eventCallback(stringResult);
+
+        });
+    }).on('error', function (e) {
+        console.log("Got error: ", e);
+    });
+}
+
+function parseJson(inputText) {
+
+    var x = JSON.parse(inputText);
+    console.log(x);
+    var retArr = [];
+    retArr.push(x.Goals.One.Name);
+    retArr.push(x.Goals.One.Status);
+    retArr.push(x.Goals.Two.Name);
+    retArr.push(x.Goals.Two.Status);
+    retArr.push(x.Goals.Three.Name);
+    retArr.push(x.Goals.Three.Status);
+
+    return retArr;
+}
+
+// Create the handler that responds to the Alexa Request.
+exports.handler = function (event, context) {
+    // Create an instance of the Motiv Skill.
+    var skill = new MotivSkill();
+    skill.execute(event, context);
+};

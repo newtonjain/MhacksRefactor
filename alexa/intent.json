@@ -1,0 +1,12 @@
+{
+  "intents": [
+    {
+      "intent": "GoalIntent"
+    },{
+      "intent": "AchievementIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    }
+  ]
+}
