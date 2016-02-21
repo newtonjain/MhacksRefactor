@@ -1,0 +1,13 @@
+{
+  "intents": [
+    {
+      "intent": "OneshotHelloWorldIntent"
+    },
+    {
+      "intent": "HelloWorldIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    }
+  ]
+}
