@@ -18,7 +18,8 @@
 /**
  * App ID for the skill
  */
-var APP_ID = undefined; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
+
+var APP_ID = "amzn1.echo-sdk-ams.app.cc1875b0-c39b-4303-9379-5546944359f7"; //replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
 
 /**
  * The AlexaSkill prototype and helper functions
@@ -39,9 +40,6 @@ var HelloWorld = function () {
 HelloWorld.prototype = Object.create(AlexaSkill.prototype);
 HelloWorld.prototype.constructor = HelloWorld;
 
-
-// -------Request and Intent Handlers -------------//
-
 HelloWorld.prototype.eventHandlers.onSessionStarted = function (sessionStartedRequest, session) {
     console.log("HelloWorld onSessionStarted requestId: " + sessionStartedRequest.requestId
         + ", sessionId: " + session.sessionId);
@@ -50,7 +48,11 @@ HelloWorld.prototype.eventHandlers.onSessionStarted = function (sessionStartedRe
 
 HelloWorld.prototype.eventHandlers.onLaunch = function (launchRequest, session, response) {
     console.log("HelloWorld onLaunch requestId: " + launchRequest.requestId + ", sessionId: " + session.sessionId);
+    // var speechOutput = "Welcome to the Alexa Skills Kit, you can say hello";
+    // var repromptText = "You can say hello";
+    // response.ask(speechOutput, repromptText);
     handleWelcomeRequest(response);
+
 };
 
 HelloWorld.prototype.eventHandlers.onSessionEnded = function (sessionEndedRequest, session) {
@@ -61,6 +63,9 @@ HelloWorld.prototype.eventHandlers.onSessionEnded = function (sessionEndedReques
 
 HelloWorld.prototype.intentHandlers = {
     // register custom intent handlers
+    "OneshotHelloWorldIntent": function (intent, session, response) {
+        handleOneshotHelloWorldRequest(intent, session, response);
+    },
     "HelloWorldIntent": function (intent, session, response) {
         response.tellWithCard("Hello World!", "Greeter", "Hello World!");
     },
@@ -76,24 +81,90 @@ exports.handler = function (event, context) {
     helloWorld.execute(event, context);
 };
 
+
 // ----------Motiv3 Domain Specific Buisness Logic ------------//
 
+var GOAL = {
+    'goal',
+    'goals'
+};
+
+var ACHIEVE = {
+    'achieve',
+    'achievement',
+    'achievements'
+};
+
 function handleWelcomeRequest(response) {
-    speechOutput = {
-        speech: "<speak>Welcome to Motive. "
-            + "<audio src = 'https://s3.amazonaws.com/motiv3/welcomeNoise.mp3/>"
-            + "</speak>",
-        type: AlexaSkill.speechOutputType.SSML
+    var speechOutput = {
+        speech: "Welcome to Motive. ",
+        type: AlexaSkill.speechOutputType.PLAIN_TEXT
     },
     repromptOutput = {
         speech: "I can tell you what your goals are"
             + "for the day, and keep you motivated."
-            + "Ask me: What are my goals for today?"
+            + "Ask me: What are my goals for today?",
         type: AlexaSkill.speechOutputType.PLAIN_TEXT
     };
 
     response.ask(speechOutput, repromptOutput);
 }
+
+function handleOneshotHelloWorldRequest(intent, response) {
+    var userResponse = getGoalFromIntent(intent),
+        repromptText,
+        speechOutput;
+    if (userResponse.error) {
+        //Did not understand user response
+        speechOutput = "I'm sorry, I didn't understand your request.";
+        repromptText = "You can ask: what are my goals for today?"
+                    + "Or, you can ask: what did I achieve today?";
+        response.ask(speechOutput, repromptText);
+        return;
+    }
+}
+
+
+function getGoalFromIntent(intent, response) {
+    var goalSlot = intent.slots.Goal;
+    //testing for missing or provided but empty value slots
+    if (!goalSlot || !goalSlot.value) {
+        return {
+                error: true
+        }
+    } else {
+        //lookup the goal
+        if (GOAL[goalSlot.toLowerCase()]) {
+
+                makeGoalRequest(response);
+            
+            }else if (ACHIEVE[goalSlot.toLowerCase()]) {
+                
+                makeAchieveRequest(response);
+            }else{ 
+
+                return {
+                    error: true
+                }
+            }
+
+    }
+}
+
+function makeGoalRequest(response) {
+    var speechOutput;
+    speechOutput = "I am telling you about your goals.";
+    response.tellWithCard(speechOutput, "Motiv3", speechOutput);
+    return;
+}
+
+function makeAchieveRequest(response) {
+    var speechOutput;
+    speechOutput = "I am telling you about your achievements.";
+    response.tellWithCard(speechOutput, "Motiv3", speechOutput);
+    return;
+}
+
 
 
 

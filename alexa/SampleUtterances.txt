@@ -1,0 +1,23 @@
+
+HelloWorldIntent say hello
+HelloWorldIntent say hello world
+HelloWorldIntent hello
+HelloWorldIntent say hi
+HelloWorldIntent say hi world
+HelloWorldIntent hi
+HelloWorldIntent how are you
+
+
+OneshotHelloWorldIntent get {Goal}
+OneshotHelloWorldIntent get {Goal} for today
+OneshotHelloWorldIntent get my {Goal}
+OneshotHelloWorldIntent get my {Goal} for today
+OneshotHelloWorldIntent what {Goal}
+OneshotHelloWorldIntent what {Goal} for today
+OneshotHelloWorldIntent what are my {Goal}
+OneshotHelloWorldIntent what are my {Goal} for today
+OneshotHelloWorldIntent what were my {Goal} today
+OneshotHelloWorldIntent what were my {Goal}
+OneshotHelloWorldIntent what did I {Goal} today
+
+
